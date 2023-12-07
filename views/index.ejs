@@ -1,0 +1,242 @@
+<!-- views/index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Buzzer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+  <!-- ... (your existing head content) ... -->
+  <style>
+    /* ... (your existing CSS styles) ... */
+    .social-icons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .social-icons a {
+      color: #007bff;
+      text-decoration: none;
+      margin-right: 10px;
+    }
+
+    .social-icons i {
+      font-size: 50px;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #0a4482;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .news-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 20px auto;
+    }
+
+    .news-box {
+      background-color: #f8f9fa;
+      border: 2px solid #03203e;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 300px;
+      text-align: left;
+      margin: 10px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .news-box:hover {
+      transform: scale(1.05);
+    }
+
+    .news-box img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #021830;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    a {
+      color: #83226a;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .load-more-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .load-more-btn {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    /* New styles for the running news strap */
+    .news-ticker-container {
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .running-strap {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .running-strap p {
+      display: inline-block;
+      animation: runNews 3s linear infinite; /* Adjust duration as needed */
+    }
+
+    @keyframes runNews {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Daily Buzzer</h1>
+  </header>
+  <div class="news-ticker-container">
+    <div class="news-ticker" id="newsTicker">
+      <% for (let i = 0; i < news.length; i++) { %>
+        <span><%= news[i].title %></span>
+      <% } %>
+    </div>
+  </div>
+  <div class="news-container" id="newsContainer">
+    <!-- Display the first 9 news items initially -->
+    <% for (let i = 0; i < 9 && i < news.length; i++) { %>
+      <div class="news-box">
+        <% const imagePath = `/images/news.jpg`; %>
+        <img src="<%= imagePath %>" alt="News Image">
+        <h2><%= news[i].title %></h2>
+        <p><%= news[i].description %></p>
+        <a href="<%= news[i].link %>" target="_blank">Read more</a>
+        <div class="social-icons">
+            <!-- Add social media links with icons -->
+            <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+    <% } %>
+  </div>
+  <div class="load-more-container">
+    <button class="load-more-btn" onclick="loadMoreNews()">Load More</button>
+  </div>
+  <!-- News Ticker Container -->
+
+  <script>
+    let visibleNews = 9; // Number of initially visible news items
+    function loadMoreNews() {
+      const newsContainer = document.getElementById('newsContainer');
+      const totalNews = <%= news.length %>;
+
+      for (let i = visibleNews; i < visibleNews + 3 && i < totalNews; i++) {
+        const newsBox = document.createElement('div');
+        newsBox.className = 'news-box';
+
+        const imagePath = `/images/news.jpg`;
+
+        newsBox.innerHTML = `
+          <img src="${imagePath}" alt="News Image">
+          <h2>${news[i].title}</h2>
+          <p>${news[i].description}</p>
+          <a href="${news[i].link}" target="_blank">Read more</a>
+          <div class="social-icons">
+            <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube"></i></a>
+          </div>
+        `;
+        
+        newsContainer.appendChild(newsBox);
+      }
+
+      visibleNews += 3;
+
+      // Hide the Load More button if all news items are displayed
+      if (visibleNews >= totalNews) {
+        document.querySelector('.load-more-container').style.display = 'none';
+      }
+    }
+    const newsTicker = document.getElementById('newsTicker');
+
+// Function to update the news ticker content
+    function updateNewsTicker() {
+    let newsIndex = 0;
+
+    function animateTicker() {
+        newsTicker.innerHTML = `<span>${news[newsIndex].title}</span>`;
+        newsIndex = (newsIndex + 1) % <%= news.length %>;
+    }
+
+    setInterval(animateTicker, 3000); // Change the duration as needed (in milliseconds)
+    }
+    
+    // Call the function to start the news ticker
+    updateNewsTicker();
+  </script>
+  <script>
+    // JavaScript code for news ticker
+    document.addEventListener('DOMContentLoaded', function () {
+      const newsTicker = document.getElementById('newsTicker');
+      let newsIndex = 0;
+
+      function animateTicker() {
+        newsTicker.innerHTML = `<span>${news[newsIndex].title}</span>`;
+        newsIndex = (newsIndex + 1) % news.length;
+      }
+
+      setInterval(animateTicker, 3000); // Change the duration as needed (in milliseconds)
+    });
+  </script>
+
+  
+  
+</body>
+</html>
